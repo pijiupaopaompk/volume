@@ -9,22 +9,31 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.widget.SeekBar;
 
 import com.soft.volume.seekbar.VerticalSeekBar;
+
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class MainActivity extends Activity {
     private VerticalSeekBar seekBar;
     private AudioManager am;
     private VolumeReceiver receiver;
-
+    private SurfaceView surfaceView;
+    private SurfaceHolder holder;
+    private IjkMediaPlayer player;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        player=new IjkMediaPlayer();
         seekBar = findViewById(R.id.seekBar);
+        surfaceView = findViewById(R.id.surface);
+        holder = surfaceView.getHolder();
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         //获取系统最大音量
@@ -63,6 +72,51 @@ public class MainActivity extends Activity {
             }
         });
 
+
+
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                playVideo();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
+    }
+
+
+
+    //播放视频
+    private void playVideo() {
+        try{
+            Log.e("mpk","playVideo");
+            player.setDataSource("rtmp://58.200.131.2:1935/livetv/gdtv");
+            player.setDisplay(holder);
+            player.prepareAsync();
+            player.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(IMediaPlayer iMediaPlayer) {
+                    player.start();
+                }
+            });
+            player.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+                    Log.e("mpk","i==="+i+"===i1==="+i1);
+                    return false;
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

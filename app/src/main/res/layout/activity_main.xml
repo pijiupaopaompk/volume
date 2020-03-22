@@ -17,4 +17,10 @@
             app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
     </com.soft.volume.seekbar.VerticalSeekBarWrapper>
 
+
+    <SurfaceView
+        android:id="@+id/surface"
+        android:layout_marginTop="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 </RelativeLayout>
